@@ -10,6 +10,7 @@ namespace Async
         {
             var text = ConcatTextAsync().GetAwaiter().GetResult();
             Console.WriteLine(text);
+            Console.ReadKey();
         }
 
         private static Task<string> ReadFileAsync()
@@ -19,14 +20,15 @@ namespace Async
 
         private static Task<string> WordAsync()
         {
-            return Task.Run(() => "World");
+            return Task.FromResult("World");
         }
 
         private static async Task<string> ConcatTextAsync()
         {
             var readFileTask = ReadFileAsync();
             var wordTask = WordAsync();
-            var result = $"{await readFileTask} {await wordTask}";
+            await Task.WhenAll(readFileTask, wordTask);
+            var result = $"{readFileTask.Result} {wordTask.Result}";
             return result;
         }
     }
